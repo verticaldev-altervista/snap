@@ -1395,7 +1395,7 @@ IDE_Morph.prototype.createCorralBar = function () {
     //new load sprite Button
     loadSpriteButton = new PushButtonMorph(
         this,
-        "loadSpriteNewSprite",
+        "loadNewSprite",
         new SymbolMorph("robot", 15)
     );
     loadSpriteButton.corner = 12;
@@ -1409,7 +1409,7 @@ IDE_Morph.prototype.createCorralBar = function () {
     loadSpriteButton.labelColor = this.buttonLabelColor;
     loadSpriteButton.contrast = this.buttonContrast;
     loadSpriteButton.drawNew();
-    loadSpriteButton.hint = "loadsprite from costumes";
+    loadSpriteButton.hint = "load new sprite from costumes catalog";
     loadSpriteButton.fixLayout();
     loadSpriteButton.setCenter(this.corralBar.center());
     loadSpriteButton.setLeft(
@@ -1418,41 +1418,6 @@ IDE_Morph.prototype.createCorralBar = function () {
     this.corralBar.add(loadSpriteButton);
     
 };
-
-IDE_Morph.prototype.loadSpriteNewSprite=function () {
-            var myself = this;
-            var dir = 'Costumes',
-                names = myself.getCostumesList(dir),
-                libMenu = new MenuMorph(
-                    myself,
-                    localize('Import') + ' ' + localize(dir)
-                );
-
-			myself.addNewSprite();
-			myself.currentSprite.setHeading(90);
-			this.selectSprite(myself.currentSprite);
-            function loadCostume(name) {
-                var url = dir + '/' + name,
-                    img = new Image();
-                img.onload = function () {
-                    var canvas = newCanvas(new Point(img.width, img.height));
-                    canvas.getContext('2d').drawImage(img, 0, 0);
-                    myself.droppedImage(canvas, name);
-                };
-                img.src = url;
-            }
-
-			
-            names.forEach(function (line) {
-                if (line.length > 0) {
-                    libMenu.addItem(
-                        line,
-                        function () {loadCostume(line); }
-                    );
-                }
-            });
-            libMenu.popup(world,world.center());
-        }
 
 
 IDE_Morph.prototype.createCorral = function () {
@@ -2008,6 +1973,43 @@ IDE_Morph.prototype.paintNewSprite = function () {
         }
     );
 };
+
+IDE_Morph.prototype.loadNewSprite = function () {
+            var myself = this;
+            var dir = 'Costumes',
+                names = myself.getCostumesList(dir),
+                libMenu = new MenuMorph(
+                    myself,
+                    localize('Import') + ' ' + localize(dir)
+                );
+
+			myself.addNewSprite();
+			myself.currentSprite.setHeading(90);
+			this.selectSprite(myself.currentSprite);
+            function loadCostume(name) {
+                var url = dir + '/' + name,
+                    img = new Image();
+                img.onload = function () {
+                    var canvas = newCanvas(new Point(img.width, img.height));
+                    canvas.getContext('2d').drawImage(img, 0, 0);
+                    myself.droppedImage(canvas, name);
+                };
+                img.src = url;
+            }
+
+			
+            names.forEach(function (line) {
+                if (line.length > 0) {
+                    libMenu.addItem(
+                        line,
+                        function () {loadCostume(line); }
+                    );
+                }
+            });
+            libMenu.popup(world,world.center());
+        }
+
+
 
 IDE_Morph.prototype.duplicateSprite = function (sprite) {
     var duplicate = sprite.fullCopy();
@@ -6091,6 +6093,31 @@ WardrobeMorph.prototype.updateList = function () {
 
     this.addContents(paintbutton);
 
+    loadCostumebutton = new PushButtonMorph(
+        this,
+        "loadNew",
+        new SymbolMorph("robot", 15)
+    );
+    loadCostumebutton.padding = 0;
+    loadCostumebutton.corner = 12;
+    loadCostumebutton.color = IDE_Morph.prototype.groupColor;
+    loadCostumebutton.highlightColor = IDE_Morph.prototype.frameColor.darker(50);
+    loadCostumebutton.pressColor = loadCostumebutton.highlightColor;
+    loadCostumebutton.labelMinExtent = new Point(36, 18);
+    loadCostumebutton.labelShadowOffset = new Point(-1, -1);
+    loadCostumebutton.labelShadowColor = loadCostumebutton.highlightColor;
+    loadCostumebutton.labelColor = TurtleIconMorph.prototype.labelColor;
+    loadCostumebutton.contrast = this.buttonContrast;
+    loadCostumebutton.drawNew();
+    loadCostumebutton.hint = "load Costume from catalog";
+    loadCostumebutton.setPosition(new Point(x, y));
+    loadCostumebutton.fixLayout();
+    loadCostumebutton.setCenter(icon.center());
+    loadCostumebutton.setLeft(paintbutton.right() + padding * 4);
+
+
+    this.addContents(loadCostumebutton);
+
     txt = new TextMorph(localize(
         "costumes tab help" // look up long string in translator
     ));
@@ -6158,6 +6185,43 @@ WardrobeMorph.prototype.paintNew = function () {
         }
     });
 };
+
+WardrobeMorph.prototype.loadNew = function () {
+            var myself = this;
+            var ide = this.parentThatIsA(IDE_Morph)
+            var dir = 'Costumes',
+                names = ide.getCostumesList(dir),
+                libMenu = new MenuMorph(
+                    myself,
+                    localize('Import') + ' ' + localize(dir)
+                );
+
+            function loadCostume(name) {
+                var url = dir + '/' + name,
+                    img = new Image();
+                img.onload = function () {
+                    var canvas = newCanvas(new Point(img.width, img.height));
+                    canvas.getContext('2d').drawImage(img, 0, 0);
+                    ide.droppedImage(canvas, name);
+                    myself.updateList();
+                };
+                img.src = url;
+            }
+
+			
+            names.forEach(function (line) {
+                if (line.length > 0) {
+                    libMenu.addItem(
+                        line,
+                        function () {loadCostume(line); }
+                    );
+                }
+            });
+            libMenu.popup(world,world.center());
+        }
+
+
+
 
 // Wardrobe drag & drop
 
