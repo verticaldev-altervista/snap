@@ -6189,8 +6189,10 @@ WardrobeMorph.prototype.paintNew = function () {
 WardrobeMorph.prototype.loadNew = function () {
             var myself = this;
             var ide = this.parentThatIsA(IDE_Morph)
-            var dir = 'Costumes',
-                names = ide.getCostumesList(dir),
+			var dir = 'Backgrounds';
+            if (ide.currentSprite instanceof SpriteMorph)
+					dir='Costumes';
+            var    names = ide.getCostumesList(dir),
                 libMenu = new MenuMorph(
                     myself,
                     localize('Import') + ' ' + localize(dir)
