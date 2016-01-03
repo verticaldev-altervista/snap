@@ -570,8 +570,8 @@ IDE_Morph.prototype.createControlBar = function () {
 
     //pauseButton
     button = new ToggleButtonMorph(
-        null, //colors,
-        myself, // the IDE is the target
+        null, //colors
+        this, // the IDE is the target
         'togglePauseResume',
         [
             new SymbolMorph('pause', 12),
@@ -599,7 +599,7 @@ IDE_Morph.prototype.createControlBar = function () {
     pauseButton = button;
     this.controlBar.add(pauseButton);
     this.controlBar.pauseButton = pauseButton; // for refreshing
-
+	
     // startButton
     button = new PushButtonMorph(
         this,
@@ -1056,6 +1056,7 @@ IDE_Morph.prototype.createSpriteBar = function () {
 	if (this.currentSprite instanceof SpriteMorph){
 		//xLabel
 		xLabel= new StringMorph("x");
+		xLabel.setColor(this.buttonLabelColor);
 		xLabel.setPosition(nameField.topRight().add(new Point(10, 3)));
 		this.spriteBar.add(xLabel);
 		
@@ -1076,6 +1077,7 @@ IDE_Morph.prototype.createSpriteBar = function () {
 
 		//scaleLabel
 		scaleLabel= new StringMorph("size%");
+		scaleLabel.setColor(this.buttonLabelColor);
 		scaleLabel.setPosition(xField.topRight().add(new Point(10, 3)));
 		this.spriteBar.add(scaleLabel);
 		
@@ -1096,6 +1098,7 @@ IDE_Morph.prototype.createSpriteBar = function () {
 
 		//yLabel
 		yLabel= new StringMorph("y");
+		yLabel.setColor(this.buttonLabelColor);		
 		yLabel.setPosition(xLabel.bottomLeft().add(new Point(0, 6)));
 		this.spriteBar.add(yLabel);
 		
@@ -1117,6 +1120,7 @@ IDE_Morph.prototype.createSpriteBar = function () {
 
 		//headingLabel
 		headingLabel= new StringMorph("angle");
+		headingLabel.setColor(this.buttonLabelColor);
 		headingLabel.setPosition(scaleLabel.bottomLeft().add(new Point(0, 6)));
 		this.spriteBar.add(headingLabel);
 		
@@ -1831,14 +1835,14 @@ IDE_Morph.prototype.selectSprite = function (sprite) {
 
 IDE_Morph.prototype.oldDesign = function () {
     this.setOldDesign();
-    this.refreshIDE();
     this.saveSetting('design', 'old');
+    location.reload();
 };
 
 IDE_Morph.prototype.flatDesign = function () {
     this.setFlatDesign();
-    this.refreshIDE();
-    this.removeSetting('design');
+	this.saveSetting('design', 'flat');
+    location.reload();
 };
 
 IDE_Morph.prototype.refreshIDE = function () {
@@ -1861,6 +1865,7 @@ IDE_Morph.prototype.refreshIDE = function () {
     } else {
         this.openProjectString(projectData);
     }
+
 };
 
 // IDE_Morph settings persistance
@@ -1874,7 +1879,7 @@ IDE_Morph.prototype.applySavedSettings = function () {
         plainprototype = this.getSetting('plainprototype');
 
     // design
-    if (design === 'flat') {
+    if (design == 'old') {
         this.setOldDesign();
     } else {
         this.setFlatDesign();
@@ -2399,9 +2404,9 @@ IDE_Morph.prototype.settingsMenu = function () {
         'Flat design',
         function () {
             if (MorphicPreferences.isFlat) {
-                return myself.oldDesign();
+                return this.oldDesign();
             }
-            myself.flatDesign();
+            this.flatDesign();
         },
         MorphicPreferences.isFlat,
         'uncheck for old\nGUI design',
