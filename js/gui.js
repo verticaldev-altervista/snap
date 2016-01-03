@@ -5790,7 +5790,7 @@ CostumeIconMorph.prototype.removeCostume = function () {
     var wardrobe = this.parentThatIsA(WardrobeMorph),
         idx = this.parent.children.indexOf(this),
         ide = this.parentThatIsA(IDE_Morph);
-    wardrobe.removeCostumeAt(idx - 2);
+    wardrobe.removeCostumeAt(idx - 3);
     if (ide.currentSprite.costume === this.object) {
         ide.currentSprite.wearCostume(null);
     }
@@ -6442,7 +6442,7 @@ SoundIconMorph.prototype.renameSound = function () {
 SoundIconMorph.prototype.removeSound = function () {
     var jukebox = this.parentThatIsA(JukeboxMorph),
         idx = this.parent.children.indexOf(this);
-    jukebox.removeSound(idx);
+    jukebox.removeSound(idx-1);
 };
 
 SoundIconMorph.prototype.createBackgrounds
@@ -6512,12 +6512,41 @@ JukeboxMorph.prototype.updateList = function () {
     };
     this.addBack(this.contents);
 
+    loadSoundbutton = new PushButtonMorph(
+        this,
+        "loadSound",
+        new SymbolMorph("robot", 15)
+    );
+    loadSoundbutton.padding = 0;
+    loadSoundbutton.corner = 12;
+    loadSoundbutton.color = IDE_Morph.prototype.groupColor;
+    loadSoundbutton.highlightColor = IDE_Morph.prototype.frameColor.darker(50);
+    loadSoundbutton.pressColor = loadSoundbutton.highlightColor;
+    loadSoundbutton.labelMinExtent = new Point(36, 18);
+    loadSoundbutton.labelShadowOffset = new Point(-1, -1);
+    loadSoundbutton.labelShadowColor = loadSoundbutton.highlightColor;
+    loadSoundbutton.labelColor = TurtleIconMorph.prototype.labelColor;
+    loadSoundbutton.contrast = this.buttonContrast;
+    loadSoundbutton.drawNew();
+    loadSoundbutton.hint = "load Sound from catalog";
+    loadSoundbutton.setPosition(new Point(x, y));
+    loadSoundbutton.fixLayout();
+
+
+    this.addContents(loadSoundbutton);
+
+
+
+
+
     txt = new TextMorph(localize(
         'import a sound from your computer\nby dragging it into here'
     ));
     txt.fontSize = 9;
     txt.setColor(SpriteMorph.prototype.paletteTextColor);
     txt.setPosition(new Point(x, y));
+    //txt.setCenter(icon.center());
+    txt.setTop(loadSoundbutton.bottom() + padding * 4);
     this.addContents(txt);
     y = txt.bottom() + padding;
 
@@ -6533,6 +6562,32 @@ JukeboxMorph.prototype.updateList = function () {
 
     this.updateSelection();
 };
+
+JukeboxMorph.prototype.loadSound = function() {
+		var ide = this.parentThatIsA(IDE_Morph),
+			names = ide.getCostumesList('Sounds'),
+            libMenu = new MenuMorph(this, 'Import sound');
+
+        function loadSound(name) {
+            var url = 'Sounds/' + name,
+                audio = new Audio();
+                audio.src = url;
+                audio.load();
+                ide.droppedAudio(audio, name);
+            }
+
+            names.forEach(function (line) {
+            if (line.length > 0) {
+                libMenu.addItem(
+                    line,
+                    function () {loadSound(line); }
+				);
+        }
+    });
+    libMenu.popup(world,world.center() );
+};
+
+
 
 JukeboxMorph.prototype.updateSelection = function () {
     this.contents.children.forEach(function (morph) {
