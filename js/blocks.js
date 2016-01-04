@@ -7782,7 +7782,11 @@ SymbolMorph.prototype.names = [
     'arrowRight',
     'arrowRightOutline',
     'robot',
-    'world'
+    'world',
+    'up',
+    'down',
+    'left',
+    'right'
 ];
 
 // SymbolMorph instance creation:
@@ -7948,6 +7952,14 @@ SymbolMorph.prototype.symbolCanvasColored = function (aColor) {
         return this.drawSymbolRobot(canvas, aColor);
     case 'world':
         return this.drawSymbolWorld(canvas, aColor);
+    case 'up':
+        return this.drawSymbolUp(canvas, aColor);
+    case 'down':
+        return this.drawSymbolDown(canvas, aColor);
+    case 'left':
+        return this.drawSymbolLeft(canvas, aColor);
+    case 'right':
+        return this.drawSymbolRight(canvas, aColor);
     default:
         return canvas;
     }
@@ -9045,6 +9057,62 @@ SymbolMorph.prototype.drawSymbolWorld = function (canvas, color) {
     ctx.closePath();
     ctx.stroke();
 
+    return canvas;
+};
+
+SymbolMorph.prototype.drawSymbolUp = function (canvas, color) {
+    // answer a canvas showing an up arrow
+    var ctx = canvas.getContext('2d'),
+        w = canvas.width-1,
+        h = canvas.height-1,
+        n = canvas.width / 2,
+        l = canvas.height / 2;
+
+    ctx.fillStyle = color.toString();
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(n, 1);
+	ctx.lineTo(n, 1);
+    ctx.lineTo(w , h);
+    ctx.lineTo(1, h);
+    ctx.closePath();
+    ctx.fill();
+    return canvas;
+};
+
+SymbolMorph.prototype.drawSymbolDown = function (canvas, color) {
+    // answer a canvas showing a down arrow
+    var ctx = canvas.getContext('2d'),
+        w = canvas.width;
+    ctx.save();
+    ctx.translate(w, w);
+    ctx.rotate(radians(180));
+    this.drawSymbolUp(canvas, color);
+    ctx.restore();
+    return canvas;
+};
+
+SymbolMorph.prototype.drawSymbolLeft = function (canvas, color) {
+    // answer a canvas showing a left arrow
+    var ctx = canvas.getContext('2d'),
+        w = canvas.width;
+    ctx.save();
+    ctx.translate(0, w);
+    ctx.rotate(radians(-90));
+    this.drawSymbolUp(canvas, color);
+    ctx.restore();
+    return canvas;
+};
+
+SymbolMorph.prototype.drawSymbolRight = function (canvas, color) {
+    // answer a canvas showing a right arrow
+    var ctx = canvas.getContext('2d'),
+        w = canvas.width;
+    ctx.save();
+    ctx.translate(w, 0);
+    ctx.rotate(radians(90));
+    this.drawSymbolUp(canvas, color);
+    ctx.restore();
     return canvas;
 };
 

@@ -1061,11 +1061,11 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		this.spriteBar.add(xLabel);
 		
 		//xField
-		xField = new InputFieldMorph(""+parseInt(this.currentSprite.xPosition()),1,0,0);
+		xField = new InputFieldMorph(""+Math.floor(this.currentSprite.xPosition()),1,0,0);
 		xField.setWidth(30); // fixed dimensions
 		xField.contrast = 90;
 		xField.fixLayout();
-		xField.setPosition(xLabel.topLeft().add(new Point(10, -3)));
+		xField.setPosition(xLabel.topLeft().add(new Point(20, -3)));
 		this.spriteBar.add(xField);
 		xField.drawNew();
 		xField.accept = function () {
@@ -1075,26 +1075,82 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		};
 		this.spriteBar.reactToEdit = xField.accept;
 
+		//xMinButton
+		xMinButton = new PushButtonMorph(
+			this,
+			function() { xField.setContents(Number(xField.getValue())-1);xField.accept();},
+			new SymbolMorph('left', 8)
+		);
+		xMinButton.labelMinExtent = new Point(9, 14);
+		xMinButton.padding = 0;
+		xMinButton.drawNew();
+		xMinButton.fixLayout();
+		xMinButton.setPosition(xField.topLeft().add(new Point(-14,1)));
+		this.spriteBar.add(xMinButton);
+
+		//xPlusButton
+		xPlusButton = new PushButtonMorph(
+			this,
+			function() { xField.setContents(Number(xField.getValue()) + 1);xField.accept();},
+			new SymbolMorph('right', 8)
+		);
+		xPlusButton.labelMinExtent = new Point(9, 14);
+		xPlusButton.padding = 0;
+		xPlusButton.drawNew();
+		xPlusButton.fixLayout();
+		xPlusButton.setPosition(xField.topRight().add(new Point(-1,1)));
+		this.spriteBar.add(xPlusButton);
+
+
 		//scaleLabel
 		scaleLabel= new StringMorph("size%");
 		scaleLabel.setColor(this.buttonLabelColor);
-		scaleLabel.setPosition(xField.topRight().add(new Point(10, 3)));
+		scaleLabel.setPosition(xField.topRight().add(new Point(20, 3)));
 		this.spriteBar.add(scaleLabel);
 		
+		
+		
 		//scaleField
-		scaleField = new InputFieldMorph(""+parseInt(this.currentSprite.getScale()),1,0,0);
+		scaleField = new InputFieldMorph(""+Math.round(this.currentSprite.getScale()),1,0,0);
 		scaleField.setWidth(30); // fixed dimensions
 		scaleField.contrast = 90;
 		scaleField.fixLayout();
-		scaleField.setPosition(scaleLabel.topLeft().add(new Point(40, -3)));
+		scaleField.setPosition(scaleLabel.topLeft().add(new Point(45, -3)));
 		this.spriteBar.add(scaleField);
 		scaleField.drawNew();
 		scaleField.accept = function () {
 			var newScale = scaleField.getValue();
 			myself.currentSprite.setScale(newScale);
-			scaleField.setContents(myself.currentSprite.getScale());
+			scaleField.setContents(Math.round(myself.currentSprite.getScale()));
 		};
 		this.spriteBar.reactToEdit = scaleField.accept;
+
+		//scaleMinButton
+		scaleMinButton = new PushButtonMorph(
+			this,
+			function() { scaleField.setContents(Number(scaleField.getValue())-1);scaleField.accept();},
+			new SymbolMorph('left', 8)
+		);
+		scaleMinButton.labelMinExtent = new Point(9, 14);
+		scaleMinButton.padding = 0;
+		scaleMinButton.drawNew();
+		scaleMinButton.fixLayout();
+		scaleMinButton.setPosition(scaleField.topLeft().add(new Point(-14,1)));
+		this.spriteBar.add(scaleMinButton);
+
+		//scalePlusButton
+		scalePlusButton = new PushButtonMorph(
+			this,
+			function() { scaleField.setContents(Number(scaleField.getValue()) + Number(1.0));scaleField.accept();},
+			new SymbolMorph('right', 8)
+		);
+		scalePlusButton.labelMinExtent = new Point(9, 14);
+		scalePlusButton.padding = 0;
+		scalePlusButton.drawNew();
+		scalePlusButton.fixLayout();
+		scalePlusButton.setPosition(scaleField.topRight().add(new Point(-1,1)));
+		this.spriteBar.add(scalePlusButton);
+
 
 		//yLabel
 		yLabel= new StringMorph("y");
@@ -1103,11 +1159,11 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		this.spriteBar.add(yLabel);
 		
 		//yField
-		yField = new InputFieldMorph(""+parseInt(this.currentSprite.yPosition()),1,0,0);
+		yField = new InputFieldMorph(""+Math.floor(this.currentSprite.yPosition()),1,0,0);
 		yField.setWidth(30); // fixed dimensions
 		yField.contrast = 90;
 		yField.fixLayout();
-		yField.setPosition(yLabel.topLeft().add(new Point(10, -3)));
+		yField.setPosition(yLabel.topLeft().add(new Point(20, -3)));
 		this.spriteBar.add(yField);
 		yField.drawNew();
 		yField.accept = function () {
@@ -1117,6 +1173,32 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		};
 		this.spriteBar.reactToEdit = yField.accept;
 
+		//yMinButton
+		yMinButton = new PushButtonMorph(
+			this,
+			function() { yField.setContents(Number(yField.getValue())-1);yField.accept();},
+			new SymbolMorph('left', 8)
+		);
+		yMinButton.labelMinExtent = new Point(9, 14);
+		yMinButton.padding = 0;
+		yMinButton.drawNew();
+		yMinButton.fixLayout();
+		yMinButton.setPosition(yField.topLeft().add(new Point(-14,1)));
+		this.spriteBar.add(yMinButton);
+
+		//yPlusButton
+		yPlusButton = new PushButtonMorph(
+			this,
+			function() { yField.setContents(Number(yField.getValue()) + 1);yField.accept();},
+			new SymbolMorph('right', 8)
+		);
+		yPlusButton.labelMinExtent = new Point(9, 14);
+		yPlusButton.padding = 0;
+		yPlusButton.drawNew();
+		yPlusButton.fixLayout();
+		yPlusButton.setPosition(yField.topRight().add(new Point(-1,1)));
+		this.spriteBar.add(yPlusButton);
+
 
 		//headingLabel
 		headingLabel= new StringMorph("angle");
@@ -1125,19 +1207,44 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		this.spriteBar.add(headingLabel);
 		
 		//headingField
-		headingField = new InputFieldMorph(""+parseInt(this.currentSprite.heading));
+		headingField = new InputFieldMorph(""+Math.floor(this.currentSprite.heading));
 		headingField.setWidth(30); // fixed dimensions
 		headingField.contrast = 90;
-		headingField.setPosition(headingLabel.topLeft().add(new Point(40, -3)));
+		headingField.setPosition(headingLabel.topLeft().add(new Point(45, -3)));
 		this.spriteBar.add(headingField);
 		headingField.drawNew();
 		headingField.accept = function () {
 			var newHeading = headingField.getValue();
-			myself.currentSprite.setHeading(newHeading);
-			headingField.setContents(myself.currentSprite.heading);
+			myself.currentSprite.setHeading(Math.floor(newHeading));
+			headingField.setContents(Math.floor(myself.currentSprite.heading));
 		};
 		this.spriteBar.reactToEdit = headingField.accept;
 
+		//headingMinButton
+		headingMinButton = new PushButtonMorph(
+			this,
+			function() { headingField.setContents(Number(headingField.getValue())-1);headingField.accept();},
+			new SymbolMorph('left', 8)
+		);
+		headingMinButton.labelMinExtent = new Point(9, 14);
+		headingMinButton.padding = 0;
+		headingMinButton.drawNew();
+		headingMinButton.fixLayout();
+		headingMinButton.setPosition(headingField.topLeft().add(new Point(-14,1)));
+		this.spriteBar.add(headingMinButton);
+
+		//headingPlusButton
+		headingPlusButton = new PushButtonMorph(
+			this,
+			function() { headingField.setContents(Number(headingField.getValue()) + 1);headingField.accept();},
+			new SymbolMorph('right', 8)
+		);
+		headingPlusButton.labelMinExtent = new Point(9, 14);
+		headingPlusButton.padding = 0;
+		headingPlusButton.drawNew();
+		headingPlusButton.fixLayout();
+		headingPlusButton.setPosition(headingField.topRight().add(new Point(-1,1)));
+		this.spriteBar.add(headingPlusButton);
 
 
 
@@ -6204,7 +6311,23 @@ WardrobeMorph.prototype.loadNew = function () {
                 );
 
             function loadCostume(name) {
-                var url = dir + '/' + name,
+                var url = dir + '/' + name;
+				if (name.substring(name.length-1)=='/'){
+					names = ide.getCostumesList(url);
+					libMenu = new MenuMorph(
+						WardrobeMorph,
+						localize('Import') + ' ' + localize(dir)
+					);
+					names.forEach(function (line) {
+						if (line.length > 0) {
+							libMenu.addItem(
+								line,
+								function () {loadCostume(name+line); }
+							);
+						}
+					});
+					libMenu.popup(world,world.center());
+				}
                     img = new Image();
                 img.onload = function () {
                     var canvas = newCanvas(new Point(img.width, img.height));
@@ -6537,12 +6660,7 @@ JukeboxMorph.prototype.updateList = function () {
     loadSoundbutton.setPosition(new Point(x, y));
     loadSoundbutton.fixLayout();
 
-
     this.addContents(loadSoundbutton);
-
-
-
-
 
     txt = new TextMorph(localize(
         'import a sound from your computer\nby dragging it into here'
@@ -6569,27 +6687,27 @@ JukeboxMorph.prototype.updateList = function () {
 };
 
 JukeboxMorph.prototype.loadSound = function() {
-		var ide = this.parentThatIsA(IDE_Morph),
-			names = ide.getCostumesList('Sounds'),
-            libMenu = new MenuMorph(this, 'Import sound');
+	var ide = this.parentThatIsA(IDE_Morph),
+		names = ide.getCostumesList('Sounds'),
+        libMenu = new MenuMorph(this, 'Import sound');
 
-        function loadSound(name) {
-            var url = 'Sounds/' + name,
-                audio = new Audio();
-                audio.src = url;
-                audio.load();
-                ide.droppedAudio(audio, name);
-            }
-
-            names.forEach(function (line) {
-            if (line.length > 0) {
-                libMenu.addItem(
-                    line,
-                    function () {loadSound(line); }
-				);
+    function loadSound(name) {
+        var url = 'Sounds/' + name,
+            audio = new Audio();
+            audio.src = url;
+            audio.load();
+            ide.droppedAudio(audio, name);
         }
-    });
-    libMenu.popup(world,world.center() );
+
+    names.forEach(function (line) {
+        if (line.length > 0) {
+            libMenu.addItem(
+                line,
+                function () {loadSound(line); }
+			);
+		}
+	});
+	libMenu.popup(world,world.center() );
 };
 
 
