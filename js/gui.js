@@ -1666,7 +1666,7 @@ IDE_Morph.prototype.fixLayout = function (situation) {
             ) * 10) / 10);
             this.stage.setCenter(this.center());
         } else {
-//            this.stage.setScale(this.isSmallStage ? 0.5 : 1);
+            this.stage.setScale(this.isSmallStage ? 0.5 : 1);//
             this.stage.setScale(this.isSmallStage ? this.stageRatio : 1);
             this.stage.setTop(this.logo.bottom() + padding);
             this.stage.setRight(this.right());
@@ -1918,13 +1918,13 @@ IDE_Morph.prototype.togglePauseResume = function () {
 
 IDE_Morph.prototype.isPaused = function () {
     if (!this.stage) {return false; }
-    this.selectSprite(this.currentSprite);    
+    if (!this.isAppMode)this.selectSprite(this.currentSprite);    
     return this.stage.threads.isPaused();
 };
 
 IDE_Morph.prototype.stopAllScripts = function () {
     this.stage.fireStopAllEvent();
-    this.selectSprite(this.currentSprite);    
+    if (!this.isAppMode)this.selectSprite(this.currentSprite);    
 
 };
 
@@ -1944,12 +1944,14 @@ IDE_Morph.prototype.oldDesign = function () {
     this.setOldDesign();
     this.saveSetting('design', 'old');
     location.reload();
+    //this.refreshIDE();
 };
 
 IDE_Morph.prototype.flatDesign = function () {
     this.setFlatDesign();
 	this.saveSetting('design', 'flat');
     location.reload();
+    //this.refreshIDE();
 };
 
 IDE_Morph.prototype.refreshIDE = function () {
@@ -2098,9 +2100,28 @@ IDE_Morph.prototype.loadNewSprite = function () {
 			myself.addNewSprite();
 			myself.currentSprite.setHeading(90);
 			this.selectSprite(myself.currentSprite);
+			
             function loadCostume(name) {
-                var url = dir + '/' + name,
-                    img = new Image();
+                var url = dir + '/' + name;
+   				if (name.substring(name.length-1)=='/'){
+					names = myself.getCostumesList(url);
+					libMenu = new MenuMorph(
+						IDE_Morph,
+						localize('Import') + ' ' + localize(dir)
+					);
+					names.forEach(function (line) {
+						if (line.length > 0) {
+							libMenu.addItem(
+								line,
+								function () {loadCostume(name+line); }
+							);
+						}
+					});
+					libMenu.popup(world,world.center());
+					return;
+				}
+
+                var img = new Image();
                 img.onload = function () {
                     var canvas = newCanvas(new Point(img.width, img.height));
                     canvas.getContext('2d').drawImage(img, 0, 0);
@@ -2718,8 +2739,26 @@ IDE_Morph.prototype.projectMenu = function () {
                 );
 
             function loadCostume(name) {
-                var url = dir + '/' + name,
-                    img = new Image();
+                var url = dir + '/' + name;
+                if (name.substring(name.length-1)=='/'){
+					names = myself.getCostumesList(url);
+					libMenu = new MenuMorph(
+						IDE_Morph,
+						localize('Import') + ' ' + localize(dir)
+					);
+					names.forEach(function (line) {
+						if (line.length > 0) {
+							libMenu.addItem(
+								line,
+								function () {loadCostume(name+line); }
+							);
+						}
+					});
+					libMenu.popup(world,world.center());
+					return;
+				}
+
+                var img = new Image();
                 img.onload = function () {
                     var canvas = newCanvas(new Point(img.width, img.height));
                     canvas.getContext('2d').drawImage(img, 0, 0);
@@ -2743,12 +2782,31 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addItem(
         localize('Sounds') + '...',
         function () {
-            var names = this.getCostumesList('Sounds'),
+			var dir ='Sounds';
+            var names = this.getCostumesList(dir),
                 libMenu = new MenuMorph(this, 'Import sound');
 
             function loadSound(name) {
-                var url = 'Sounds/' + name,
-                    audio = new Audio();
+                var url = dir + '/' + name;
+                if (name.substring(name.length-1)=='/'){
+					names = myself.getCostumesList(url);
+					libMenu = new MenuMorph(
+						WardrobeMorph,
+						localize('Import') + ' ' + localize(dir)
+					);
+					names.forEach(function (line) {
+						if (line.length > 0) {
+							libMenu.addItem(
+								line,
+								function () {loadCostume(name+line); }
+							);
+						}
+					});
+					libMenu.popup(world,world.center());
+					return;
+				}
+
+                var audio = new Audio();
                 audio.src = url;
                 audio.load();
                 myself.droppedAudio(audio, name);
@@ -3490,7 +3548,7 @@ IDE_Morph.prototype.toggleZebraColoring = function () {
 
     // select all scripts:
     this.stage.children.concat(this.stage).forEach(function (morph) {
-        if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
+        if (mortoggleStageSizeph instanceof SpriteMorph || morph instanceof StageMorph) {
             scripts = scripts.concat(
                 morph.scripts.children.filter(function (morph) {
                     return morph instanceof BlockMorph;
@@ -4149,7 +4207,7 @@ IDE_Morph.prototype.exportProjectMedia = function (name) {
     }
     this.serializer.isCollectingMedia = false;
     this.serializer.flushMedia();
-    // this.hasChangedMedia = false;
+    //this.hasChangedMedia = false;
 };
 
 IDE_Morph.prototype.exportProjectNoMedia = function (name) {
@@ -6284,18 +6342,18 @@ WardrobeMorph.prototype.removeCostumeAt = function (idx) {
 
 WardrobeMorph.prototype.paintNew = function () {
     var cos = new Costume(
-            newCanvas(),
-            this.sprite.newCostumeName(localize('Untitled'))
+        newCanvas(),
+        this.sprite.newCostumeName(localize('Untitled'))
         ),
         ide = this.parentThatIsA(IDE_Morph),
-        myself = this;
-    cos.edit(this.world(), ide, true, null, function () {
-        myself.sprite.addCostume(cos);
-        myself.updateList();
-        if (ide) {
-            ide.currentSprite.wearCostume(cos);
-        }
-    });
+    myself = this;
+	cos.edit(this.world(), ide, true, null, function () {
+			myself.sprite.addCostume(cos);
+			myself.updateList();
+			if (ide) {
+				ide.currentSprite.wearCostume(cos);
+			}
+		});
 };
 
 WardrobeMorph.prototype.loadNew = function () {
@@ -6327,8 +6385,9 @@ WardrobeMorph.prototype.loadNew = function () {
 						}
 					});
 					libMenu.popup(world,world.center());
+					return;
 				}
-                    img = new Image();
+                var img = new Image();
                 img.onload = function () {
                     var canvas = newCanvas(new Point(img.width, img.height));
                     canvas.getContext('2d').drawImage(img, 0, 0);
@@ -6687,17 +6746,35 @@ JukeboxMorph.prototype.updateList = function () {
 };
 
 JukeboxMorph.prototype.loadSound = function() {
+	var dir = 'Sounds';
 	var ide = this.parentThatIsA(IDE_Morph),
-		names = ide.getCostumesList('Sounds'),
+		names = ide.getCostumesList(dir),
         libMenu = new MenuMorph(this, 'Import sound');
 
     function loadSound(name) {
-        var url = 'Sounds/' + name,
-            audio = new Audio();
-            audio.src = url;
-            audio.load();
-            ide.droppedAudio(audio, name);
-        }
+        var url = dir +'/'+ name;
+        if (name.substring(name.length-1)=='/'){
+					names = ide.getCostumesList(url);
+					libMenu = new MenuMorph(
+						JukeboxMorph,
+						localize('Import') + ' ' + localize(dir)
+					);
+					names.forEach(function (line) {
+						if (line.length > 0) {
+							libMenu.addItem(
+							line,
+							function () {loadSound(name+line); }
+						);
+					}
+				});
+				libMenu.popup(world,world.center());
+				return;
+		}
+        var audio = new Audio();
+        audio.src = url;
+		audio.load();
+		ide.droppedAudio(audio, name);
+    }
 
     names.forEach(function (line) {
         if (line.length > 0) {
