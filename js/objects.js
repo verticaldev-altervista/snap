@@ -5783,6 +5783,71 @@ Costume.prototype.height = function () {
 Costume.prototype.bounds = function () {
     return new Rectangle(0, 0, this.width(), this.height());
 };
+Costume.prototype.canvasBoundingBox = function (pic) {
+    // answer the rectangle surrounding my contents' non-transparent pixels
+    var row,
+        col,
+        w = pic.width,
+        h = pic.height,
+        ctx = pic.getContext('2d'),
+        dta = ctx.getImageData(0, 0, w, h);
+
+    function getAlpha(x, y) {
+        return dta.data[((y * w * 4) + (x * 4)) + 3];
+    }
+
+    function getLeft() {
+        for (col = 0; col <= w; col += 1) {
+            for (row = 0; row <= h; row += 1) {
+                if (getAlpha(col, row)) {
+                    return col;
+                }
+            }
+        }
+        return 0;
+    }
+
+    function getTop() {
+        for (row = 0; row <= h; row += 1) {
+            for (col = 0; col <= h; col += 1) {
+                if (getAlpha(col, row)) {
+                    return row;
+                }
+            }
+        }
+        return 0;
+    }
+
+    function getRight() {
+        for (col = w; col >= 0; col -= 1) {
+            for (row = h; row >= 0; row -= 1) {
+                if (getAlpha(col, row)) {
+                    return Math.min(col + 1, w);
+                }
+            }
+        }
+        return w;
+    }
+
+    function getBottom() {
+        for (row = h; row >= 0; row -= 1) {
+            for (col = w; col >= 0; col -= 1) {
+                if (getAlpha(col, row)) {
+                    return Math.min(row + 1, h);
+                }
+            }
+        }
+        return h;
+    }
+
+    return new Rectangle(getLeft(), getTop(), getRight(), getBottom());
+};
+
+Costume.prototype.boundingBox = function () {
+    return this.canvasBoundingBox(this.contents);
+};
+
+
 
 // Costume shrink-wrapping
 

@@ -164,6 +164,7 @@ IDE_Morph.prototype.setFlatDesign = function () {
     IDE_Morph.prototype.appModeColor = IDE_Morph.prototype.frameColor;
     IDE_Morph.prototype.scriptsPaneTexture = null;
     IDE_Morph.prototype.padding = 1;
+	IDE_Morph.prototype.labelShadowOffset = null;
 
     SpriteIconMorph.prototype.labelColor
         = IDE_Morph.prototype.buttonLabelColor;
@@ -173,6 +174,7 @@ IDE_Morph.prototype.setFlatDesign = function () {
         = IDE_Morph.prototype.buttonLabelColor;
     TurtleIconMorph.prototype.labelColor
         = IDE_Morph.prototype.buttonLabelColor;
+
 };
 
 IDE_Morph.prototype.scriptsTexture = function () {
@@ -501,7 +503,7 @@ IDE_Morph.prototype.createLogo = function () {
         gradient.addColorStop(0, 'black');
         gradient.addColorStop(0.5, myself.frameColor.toString());
         context.fillStyle = MorphicPreferences.isFlat ?
-                myself.frameColor.toString() : gradient;
+                myself.groupColor : gradient;
         context.fillRect(0, 0, this.width(), this.height());
         if (this.texture) {
             this.drawTexture(this.texture);
@@ -519,17 +521,17 @@ IDE_Morph.prototype.createLogo = function () {
     };
 
     this.logo.mouseClickLeft = function () {
-        myself.snapMenu();
+        window.open('http://snap.berkeley.edu/', 'SnapWebsite');
     };
 
-    this.logo.color = new Color();
-    this.logo.setExtent(new Point(150, 28)); // dimensions are fixed
+    this.logo.color = this.groupColor;
+    this.logo.setExtent(new Point(220, 28)); // dimensions are fixed
     this.add(this.logo);
 };
 
 IDE_Morph.prototype.createControlBar = function () {
     // assumes the logo has already been created
-    var padding = 5,
+    var padding = 10,
         button,
         stopButton,
         pauseButton,
@@ -553,7 +555,7 @@ IDE_Morph.prototype.createControlBar = function () {
     }
 
     this.controlBar = new Morph();
-    this.controlBar.color = this.frameColor;
+    this.controlBar.color = this.backgroundColor;
     this.controlBar.setHeight(this.logo.height()); // height is fixed
     this.controlBar.mouseClickLeft = function () {
         this.world().fillPage();
@@ -573,7 +575,6 @@ IDE_Morph.prototype.createControlBar = function () {
             return myself.isSmallStage;
         }
     );
-
     button.corner = 12;
     button.color = colors[0];
     button.highlightColor = colors[1];
@@ -605,7 +606,6 @@ IDE_Morph.prototype.createControlBar = function () {
             return myself.isAppMode;
         }
     );
-
     button.corner = 12;
     button.color = colors[0];
     button.highlightColor = colors[1];
@@ -659,7 +659,6 @@ IDE_Morph.prototype.createControlBar = function () {
             return myself.isPaused();
         }
     );
-
     button.corner = 12;
     button.color = colors[0];
     button.highlightColor = colors[1];
@@ -705,17 +704,18 @@ IDE_Morph.prototype.createControlBar = function () {
     button = new PushButtonMorph(
         this,
         'projectMenu',
-        new SymbolMorph('file', 14)
+        'File' //new SymbolMorph('file', 14)
         //'\u270E'
     );
-    button.corner = 12;
+    button.corner = 2;
     button.color = colors[0];
     button.highlightColor = colors[1];
     button.pressColor = colors[2];
-    button.labelMinExtent = new Point(36, 18);
+    button.labelMinExtent = new Point(18, 12);
     button.padding = 0;
+    button.fontSize=12;
     button.labelShadowOffset = new Point(-1, -1);
-    button.labelShadowColor = colors[1];
+    button.labelShadowColor = colors[0];
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
@@ -729,15 +729,16 @@ IDE_Morph.prototype.createControlBar = function () {
     button = new PushButtonMorph(
         this,
         'settingsMenu',
-        new SymbolMorph('gears', 14)
+        'Settings'//new SymbolMorph('gears', 14)
         //'\u2699'
     );
-    button.corner = 12;
+    button.corner = 2;
     button.color = colors[0];
     button.highlightColor = colors[1];
     button.pressColor = colors[2];
-    button.labelMinExtent = new Point(36, 18);
+    button.labelMinExtent = new Point(18,12);
     button.padding = 0;
+    button.fontSize=12;
     button.labelShadowOffset = new Point(-1, -1);
     button.labelShadowColor = colors[1];
     button.labelColor = this.buttonLabelColor;
@@ -753,16 +754,17 @@ IDE_Morph.prototype.createControlBar = function () {
     button = new PushButtonMorph(
         this,
         'cloudMenu',
-        new SymbolMorph('cloud', 11)//cloud
+        'Clowd' //new SymbolMorph('cloud', 11)//cloud
     );
-    button.corner = 12;
+    button.corner = 2;
     button.color = colors[0];
     button.highlightColor = colors[1];
     button.pressColor = colors[2];
-    button.labelMinExtent = new Point(36, 18);
+    button.labelMinExtent = new Point(18, 12);
     button.padding = 0;
+    button.fontSize=12;
     button.labelShadowOffset = new Point(-1, -1);
-    button.labelShadowColor = colors[1];
+    button.labelShadowColor = colors[0];
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
@@ -776,16 +778,17 @@ IDE_Morph.prototype.createControlBar = function () {
     button = new PushButtonMorph(
         this,
         'languageMenu',
-        new SymbolMorph('world', 11)
+        new SymbolMorph('world', 12)
     );
-    button.corner = 12;
+    button.corner = 2;
     button.color = colors[0];
-    button.highlightColor = colors[1];
+    button.highlightColor = colors[0];
     button.pressColor = colors[2];
-    button.labelMinExtent = new Point(36, 18);
+    button.labelMinExtent = new Point(9, 12);
     button.padding = 0;
+    button.fontSize=12;
     button.labelShadowOffset = new Point(-1, -1);
-    button.labelShadowColor = colors[1];
+    button.labelShadowColor = colors[0];
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
@@ -795,6 +798,30 @@ IDE_Morph.prototype.createControlBar = function () {
     this.controlBar.add(languageButton);
     this.controlBar.languageButton = languageButton; // for menu positioning
 
+    // helpButton
+    button = new PushButtonMorph(
+        this,
+        'snapMenu',
+        'Help'//new SymbolMorph('gears', 14)
+        //'\u2699'
+    );
+    button.corner = 2;
+    button.color = colors[0];
+    button.highlightColor = colors[1];
+    button.pressColor = colors[2];
+    button.labelMinExtent = new Point(18,12);
+    button.padding = 0;
+    button.fontSize=12;
+    button.labelShadowOffset = new Point(-1, -1);
+    button.labelShadowColor = colors[1];
+    button.labelColor = this.buttonLabelColor;
+    button.contrast = this.buttonContrast;
+    button.drawNew();
+    // button.hint = 'edit settings';
+    button.fixLayout();
+    helpButton = button;
+    this.controlBar.add(helpButton);
+    this.controlBar.helpButton = helpButton; // for menu positioning
 
 
     this.controlBar.fixLayout = function () {
@@ -822,17 +849,20 @@ IDE_Morph.prototype.createControlBar = function () {
             }
         );
 
-        settingsButton.setCenter(myself.controlBar.center());
-        settingsButton.setLeft(this.left()+button.width()+padding);
-
-        cloudButton.setCenter(myself.controlBar.center());
-        cloudButton.setRight(settingsButton.left() - padding);
+        languageButton.setCenter(myself.controlBar.center());
+        languageButton.setLeft(this.left()-172 );
 
         projectButton.setCenter(myself.controlBar.center());
-        projectButton.setRight(cloudButton.left() - padding);
+        projectButton.setLeft(languageButton.right() );
 
-        languageButton.setCenter(myself.controlBar.center());
-        languageButton.setRight(projectButton.left() - padding);
+        cloudButton.setCenter(myself.controlBar.center());
+        cloudButton.setLeft(projectButton.right() );
+
+        settingsButton.setCenter(myself.controlBar.center() );
+        settingsButton.setLeft(cloudButton.right());
+
+        helpButton.setCenter(myself.controlBar.center() );
+        helpButton.setLeft(settingsButton.right());
 
         this.updateLabel();
     };
@@ -850,7 +880,7 @@ IDE_Morph.prototype.createControlBar = function () {
 
         this.label = new StringMorph(
             (myself.projectName || localize('untitled')) + suffix,
-            14,
+            16,
             'sans-serif',
             true,
             false,
@@ -862,7 +892,7 @@ IDE_Morph.prototype.createControlBar = function () {
         this.label.drawNew();
         this.add(this.label);
         this.label.setCenter(this.center());
-        this.label.setLeft(this.settingsButton.right() + padding);
+        this.label.setLeft(this.helpButton.right() + padding);
     };
 };
 
@@ -875,7 +905,7 @@ IDE_Morph.prototype.createCategories = function () {
     }
     this.categories = new Morph();
     this.categories.color = this.groupColor;
-    this.categories.silentSetWidth(this.logo.width()+50); // width is fixed
+    this.categories.silentSetWidth(this.logo.width()); // width is fixed
 
     function addCategoryButton(category) {
         var labelWidth = 75,
@@ -997,7 +1027,7 @@ IDE_Morph.prototype.createPalette = function (forSearching) {
         }
     };
 
-    this.palette.setWidth(this.logo.width()+50);
+    this.palette.setWidth(this.logo.width());
     this.add(this.palette);
     return this.palette;
 };
@@ -1037,6 +1067,11 @@ IDE_Morph.prototype.createSpriteBar = function () {
         thumbnail,
         tabCorner = 15,
         tabColors = this.tabColors,
+        colors = [
+            this.groupColor,
+            this.frameColor.darker(50),
+            this.frameColor.darker(50)
+        ],
         tabBar = new AlignmentMorph('row', -tabCorner * 2),
         tab,
         symbols = ['\u2192', '\u21BB', '\u2194'],
@@ -1166,6 +1201,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { xField.setContents(Number(xField.getValue())-1);xField.accept();},
 			new SymbolMorph('left', 8)
 		);
+		xMinButton.color = colors[0];
+		xMinButton.highlightColor = colors[0];
+		xMinButton.pressColor = colors[2];
 		xMinButton.labelMinExtent = new Point(9, 14);
 		xMinButton.padding = 0;
 		xMinButton.drawNew();
@@ -1179,6 +1217,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { xField.setContents(Number(xField.getValue()) + 1);xField.accept();},
 			new SymbolMorph('right', 8)
 		);
+		xPlusButton.color = colors[0];
+		xPlusButton.highlightColor = colors[0];
+		xPlusButton.pressColor = colors[2];
 		xPlusButton.labelMinExtent = new Point(9, 14);
 		xPlusButton.padding = 0;
 		xPlusButton.drawNew();
@@ -1216,6 +1257,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { scaleField.setContents(Number(scaleField.getValue())-1);scaleField.accept();},
 			new SymbolMorph('left', 8)
 		);
+		scaleMinButton.color = colors[0];
+		scaleMinButton.highlightColor = colors[0];
+		scaleMinButton.pressColor = colors[2];
 		scaleMinButton.labelMinExtent = new Point(9, 14);
 		scaleMinButton.padding = 0;
 		scaleMinButton.drawNew();
@@ -1229,6 +1273,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { scaleField.setContents(Number(scaleField.getValue()) + Number(1.0));scaleField.accept();},
 			new SymbolMorph('right', 8)
 		);
+		scalePlusButton.color = colors[0];
+		scalePlusButton.highlightColor = colors[0];
+		scalePlusButton.pressColor = colors[2];
 		scalePlusButton.labelMinExtent = new Point(9, 14);
 		scalePlusButton.padding = 0;
 		scalePlusButton.drawNew();
@@ -1264,6 +1311,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { yField.setContents(Number(yField.getValue())-1);yField.accept();},
 			new SymbolMorph('left', 8)
 		);
+		yMinButton.color = colors[0];
+		yMinButton.highlightColor = colors[0];
+		yMinButton.pressColor = colors[2];
 		yMinButton.labelMinExtent = new Point(9, 14);
 		yMinButton.padding = 0;
 		yMinButton.drawNew();
@@ -1277,6 +1327,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { yField.setContents(Number(yField.getValue()) + 1);yField.accept();},
 			new SymbolMorph('right', 8)
 		);
+		yPlusButton.color = colors[0];
+		yPlusButton.highlightColor = colors[0];
+		yPlusButton.pressColor = colors[2];		
 		yPlusButton.labelMinExtent = new Point(9, 14);
 		yPlusButton.padding = 0;
 		yPlusButton.drawNew();
@@ -1311,7 +1364,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { headingField.setContents(Number(headingField.getValue())-1);headingField.accept();},
 			new SymbolMorph('left', 8)
 		);
-		headingMinButton.labelMinExtent = new Point(9, 14);
+		headingMinButton.color = colors[0];
+		headingMinButton.highlightColor = colors[0];
+		headingMinButton.pressColor = colors[2];		headingMinButton.labelMinExtent = new Point(9, 14);
 		headingMinButton.padding = 0;
 		headingMinButton.drawNew();
 		headingMinButton.fixLayout();
@@ -1324,6 +1379,9 @@ IDE_Morph.prototype.createSpriteBar = function () {
 			function() { headingField.setContents(Number(headingField.getValue()) + 1);headingField.accept();},
 			new SymbolMorph('right', 8)
 		);
+		headingPlusButton.color = colors[0];
+		headingPlusButton.highlightColor = colors[0];
+		headingPlusButton.pressColor = colors[2];		
 		headingPlusButton.labelMinExtent = new Point(9, 14);
 		headingPlusButton.padding = 0;
 		headingPlusButton.drawNew();
@@ -1732,7 +1790,7 @@ IDE_Morph.prototype.fixLayout = function (situation) {
 
         // categories
         this.categories.setLeft(this.logo.left());
-        this.categories.setTop(this.logo.bottom());
+        this.categories.setTop(this.logo.bottom()+padding);
     }
 
     // palette
@@ -1803,7 +1861,12 @@ IDE_Morph.prototype.setProjectName = function (string) {
 IDE_Morph.prototype.setExtent = function (point) {
     var padding = new Point(430, 110),
         minExt,
-        ext;
+        ext,
+        maxWidth,
+        minWidth,
+        maxHeight,
+        minRatio,
+        maxRatio;
 
     // determine the minimum dimensions making sense for the current mode
     if (this.isAppMode) {
@@ -1811,21 +1874,29 @@ IDE_Morph.prototype.setExtent = function (point) {
             this.controlBar.height() + 10
         );
     } else {
-    /* // auto-switches to small stage mode, commented out b/c I don't like it
-        if (point.x < 910) {
-            this.isSmallStage = true;
-            this.stageRatio = 0.5;
+        if (this.stageRatio > 1) {
+            minExt = padding.add(StageMorph.prototype.dimensions);
+        } else {
+            minExt = padding.add(
+                StageMorph.prototype.dimensions.multiplyBy(this.stageRatio)
+            );
         }
-    */
-        minExt = this.isSmallStage ?
-                padding.add(StageMorph.prototype.dimensions.divideBy(2))
-                      : padding.add(StageMorph.prototype.dimensions);
-/*
-        minExt = this.isSmallStage ?
-                new Point(700, 350) : new Point(910, 490);
-*/
     }
     ext = point.max(minExt);
+
+    // adjust stage ratio if necessary
+    maxWidth = ext.x - (this.spriteBar.tabBar.fullBounds().right() -
+        this.left());
+    minWidth = SpriteIconMorph.prototype.thumbSize.x * 3;
+    maxHeight = (ext.y - SpriteIconMorph.prototype.thumbSize.y * 3.5);
+    minRatio = minWidth / this.stage.dimensions.x;
+    maxRatio = Math.min(
+        (maxWidth / this.stage.dimensions.x),
+        (maxHeight / this.stage.dimensions.y)
+    );
+    this.stageRatio = Math.min(maxRatio, Math.max(minRatio, this.stageRatio));
+
+    // apply
     IDE_Morph.uber.setExtent.call(this, ext);
     this.fixLayout();
 };
@@ -2333,7 +2404,7 @@ IDE_Morph.prototype.snapMenu = function () {
             new Color(100, 0, 0)
         );
     }
-    menu.popup(world, this.logo.bottomLeft());
+    menu.popup(world, this.controlBar.helpButton.bottomLeft());
 };
 
 IDE_Morph.prototype.cloudMenu = function () {
@@ -3720,6 +3791,7 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
             this.controlBar.cloudButton,
             this.controlBar.projectButton,
             this.controlBar.settingsButton,
+            this.controlBar.helpButton,
             this.controlBar.stageSizeButton,
             this.stageHandle,
             this.corral,
@@ -3735,7 +3807,7 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
     Morph.prototype.trackChanges = false;
     if (this.isAppMode) {
         this.setColor(this.appModeColor);
-        this.controlBar.setColor(this.color);
+        this.controlBar.setColor(this.frameColor);
         this.controlBar.appModeButton.refresh();
         elements.forEach(function (e) {
             e.hide();
