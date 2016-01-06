@@ -36,9 +36,8 @@ modules.cloud = '2014-May-26';
 
 var Cloud;
 
-var SnapCloud = new Cloud(
-    'https://snapcloud.miosoft.com/miocon/app/login?_app=SnapCloud'
-);
+//var SnapCloud = new Cloud('https://snapcloud.miosoft.com/miocon/app/login?_app=SnapCloud');
+var SnapCloud = new Cloud('https://vroby.dtdns.net/snap/Server/login.php?op=');
 
 // Cloud /////////////////////////////////////////////////////////////
 
