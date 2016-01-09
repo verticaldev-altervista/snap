@@ -1,2 +1,2 @@
 # snap
-fork of Berkely Snap
+fork of Berkeley Snap
