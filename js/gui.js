@@ -754,7 +754,7 @@ IDE_Morph.prototype.createControlBar = function () {
     button = new PushButtonMorph(
         this,
         'cloudMenu',
-        'Clowd' //new SymbolMorph('cloud', 11)//cloud
+        'Cloud' //new SymbolMorph('cloud', 11)//cloud
     );
     button.corner = 2;
     button.color = colors[0];
@@ -7088,6 +7088,7 @@ StageHandleMorph.prototype.drawOnCanvas = function (
 StageHandleMorph.prototype.fixLayout = function () {
     if (!this.target) {return; }
     var ide = this.target.parentThatIsA(IDE_Morph);
+	this.target.setLeft(Math.max(600,this.target.left()));
     this.setTop(this.target.top() + 10);
     this.setRight(this.target.left());
     if (ide) {ide.add(this); } // come to front
