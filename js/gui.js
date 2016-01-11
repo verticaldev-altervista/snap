@@ -503,7 +503,7 @@ IDE_Morph.prototype.createLogo = function () {
         gradient.addColorStop(0, 'black');
         gradient.addColorStop(0.5, myself.frameColor.toString());
         context.fillStyle = MorphicPreferences.isFlat ?
-                myself.groupColor : gradient;
+                myself.groupColor.toString() : gradient;
         context.fillRect(0, 0, this.width(), this.height());
         if (this.texture) {
             this.drawTexture(this.texture);
@@ -523,8 +523,7 @@ IDE_Morph.prototype.createLogo = function () {
     this.logo.mouseClickLeft = function () {
         window.open('http://snap.berkeley.edu/', 'SnapWebsite');
     };
-
-    this.logo.color = this.groupColor;
+    this.backgroundColor = this.frameColor;
     this.logo.setExtent(new Point(220, 28)); // dimensions are fixed
     this.add(this.logo);
 };
@@ -744,7 +743,7 @@ IDE_Morph.prototype.createControlBar = function () {
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
-    // button.hint = 'edit settings';
+    button.hint = 'edit settings';
     button.fixLayout();
     settingsButton = button;
     this.controlBar.add(settingsButton);
@@ -768,7 +767,7 @@ IDE_Morph.prototype.createControlBar = function () {
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
-    // button.hint = 'cloud operations';
+    button.hint = 'cloud operations';
     button.fixLayout();
     cloudButton = button;
     this.controlBar.add(cloudButton);
@@ -792,7 +791,7 @@ IDE_Morph.prototype.createControlBar = function () {
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
-    // button.hint = 'lang operations';
+    button.hint = 'lang operations';
     button.fixLayout();
     languageButton = button;
     this.controlBar.add(languageButton);
@@ -817,7 +816,7 @@ IDE_Morph.prototype.createControlBar = function () {
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
-    // button.hint = 'edit settings';
+    button.hint = 'Help and Informations';
     button.fixLayout();
     helpButton = button;
     this.controlBar.add(helpButton);
@@ -1191,7 +1190,7 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		xField.accept = function () {
 			var newX = xField.getValue();
 			myself.currentSprite.setXPosition(newX);
-			xField.setContents(""+myself.currentSprite.xPosition());
+			xField.setContents(""+""+Math.floor(myself.currentSprite.xPosition()));
 		};
 		this.spriteBar.reactToEdit = xField.accept;
 
@@ -1301,7 +1300,7 @@ IDE_Morph.prototype.createSpriteBar = function () {
 		yField.accept = function () {
 			var newY = yField.getValue();
 			myself.currentSprite.setYPosition(newY);
-			yField.setContents(""+myself.currentSprite.yPosition());
+			yField.setContents(""+Math.floor(myself.currentSprite.yPosition()));
 		};
 		this.spriteBar.reactToEdit = yField.accept;
 
@@ -6885,7 +6884,7 @@ JukeboxMorph.prototype.updateList = function () {
     txt.fontSize = 9;
     txt.setColor(SpriteMorph.prototype.paletteTextColor);
     txt.setPosition(new Point(x, y));
-    //txt.setCenter(icon.center());
+    txt.setCenter(icon.center());
     txt.setTop(loadSoundbutton.bottom() + padding * 4);
     this.addContents(txt);
     y = txt.bottom() + padding;
@@ -7088,7 +7087,7 @@ StageHandleMorph.prototype.drawOnCanvas = function (
 StageHandleMorph.prototype.fixLayout = function () {
     if (!this.target) {return; }
     var ide = this.target.parentThatIsA(IDE_Morph);
-	this.target.setLeft(Math.max(600,this.target.left()));
+	this.target.setLeft(Math.min(Math.max(600,this.target.left()),ide.right()-150));
     this.setTop(this.target.top() + 10);
     this.setRight(this.target.left());
     if (ide) {ide.add(this); } // come to front
