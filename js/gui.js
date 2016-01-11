@@ -6884,7 +6884,7 @@ JukeboxMorph.prototype.updateList = function () {
     txt.fontSize = 9;
     txt.setColor(SpriteMorph.prototype.paletteTextColor);
     txt.setPosition(new Point(x, y));
-    txt.setCenter(icon.center());
+    //txt.setCenter(icon.center());
     txt.setTop(loadSoundbutton.bottom() + padding * 4);
     this.addContents(txt);
     y = txt.bottom() + padding;
