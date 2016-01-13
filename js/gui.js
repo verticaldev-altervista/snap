@@ -523,8 +523,8 @@ IDE_Morph.prototype.createLogo = function () {
     this.logo.mouseClickLeft = function () {
         window.open('http://snap.berkeley.edu/', 'SnapWebsite');
     };
-    this.backgroundColor = this.frameColor;
-    this.logo.setExtent(new Point(220, 28)); // dimensions are fixed
+    this.logoColor = new Color();
+    this.logo.setExtent(new Point(230, 28)); // dimensions are fixed
     this.add(this.logo);
 };
 
@@ -532,15 +532,16 @@ IDE_Morph.prototype.createControlBar = function () {
     // assumes the logo has already been created
     var padding = 10,
         button,
+        stageSizeButton,
+        appModeButton,
         stopButton,
         pauseButton,
         startButton,
         projectButton,
-        stageSizeButton,
-        appModeButton,
         cloudButton,
         languageButton,
         settingsButton,
+        helpButton,
         x,
         colors = [
             this.groupColor,
@@ -554,7 +555,7 @@ IDE_Morph.prototype.createControlBar = function () {
     }
 
     this.controlBar = new Morph();
-    this.controlBar.color = this.backgroundColor;
+    this.controlBar.color = IDE_Morph.prototype.backgroundColor;
     this.controlBar.setHeight(this.logo.height()); // height is fixed
     this.controlBar.mouseClickLeft = function () {
         this.world().fillPage();
@@ -624,11 +625,22 @@ IDE_Morph.prototype.createControlBar = function () {
     this.controlBar.appModeButton = appModeButton; // for refreshing
 
     // stopButton
-    button = new PushButtonMorph(
-        this,
+    button = new ToggleButtonMorph(
+        null, // colors
+        this, // the IDE is the target
         'stopAllScripts',
-        new SymbolMorph('octagon', 14)
+        [
+            new SymbolMorph('octagon', 14),
+            new SymbolMorph('square', 14)
+        ],
+        function () {  // query
+            return myself.stage ?
+                    myself.stage.enableCustomHatBlocks &&
+                        myself.stage.threads.pauseCustomHatBlocks
+                        : true;
+        }
     );
+
     button.corner = 12;
     button.color = colors[0];
     button.highlightColor = colors[1];
@@ -642,9 +654,11 @@ IDE_Morph.prototype.createControlBar = function () {
     button.drawNew();
     // button.hint = 'stop\nevery-\nthing';
     button.fixLayout();
+    button.refresh();
     stopButton = button;
     this.controlBar.add(stopButton);
-
+    this.controlBar.stopButton = stopButton; // for refreshing
+    
     //pauseButton
     button = new ToggleButtonMorph(
         null, //colors
@@ -699,6 +713,30 @@ IDE_Morph.prototype.createControlBar = function () {
     this.controlBar.add(startButton);
     this.controlBar.startButton = startButton;
 
+    // languageButton
+    button = new PushButtonMorph(
+        this,
+        'languageMenu',
+        new SymbolMorph('world', 12)
+    );
+    button.corner = 2;
+    button.color = colors[0];
+    button.highlightColor = colors[0];
+    button.pressColor = colors[2];
+    button.labelMinExtent = new Point(9, 12);
+    button.padding = 0;
+    button.fontSize=12;
+    button.labelShadowOffset = new Point(-1, -1);
+    button.labelShadowColor = colors[0];
+    button.labelColor = this.buttonLabelColor;
+    button.contrast = this.buttonContrast;
+    button.drawNew();
+    button.hint = 'lang operations';
+    button.fixLayout();
+    languageButton = button;
+    this.controlBar.add(languageButton);
+    this.controlBar.languageButton = languageButton; // for menu positioning
+
     // projectButton
     button = new PushButtonMorph(
         this,
@@ -718,11 +756,35 @@ IDE_Morph.prototype.createControlBar = function () {
     button.labelColor = this.buttonLabelColor;
     button.contrast = this.buttonContrast;
     button.drawNew();
-    // button.hint = 'open, save, & annotate project';
+    button.hint = 'open, save, & annotate project';
     button.fixLayout();
     projectButton = button;
     this.controlBar.add(projectButton);
     this.controlBar.projectButton = projectButton; // for menu positioning
+
+    // cloudButton
+    button = new PushButtonMorph(
+        this,
+        'cloudMenu',
+        'Cloud' //new SymbolMorph('cloud', 11)//cloud
+    );
+    button.corner = 2;
+    button.color = colors[0];
+    button.highlightColor = colors[1];
+    button.pressColor = colors[2];
+    button.labelMinExtent = new Point(18, 12);
+    button.padding = 0;
+    button.fontSize=12;
+    button.labelShadowOffset = new Point(-1, -1);
+    button.labelShadowColor = colors[0];
+    button.labelColor = this.buttonLabelColor;
+    button.contrast = this.buttonContrast;
+    button.drawNew();
+    button.hint = 'cloud operations';
+    button.fixLayout();
+    cloudButton = button;
+    this.controlBar.add(cloudButton);
+    this.controlBar.cloudButton = cloudButton; // for menu positioning
 
     // settingsButton
     button = new PushButtonMorph(
@@ -749,54 +811,7 @@ IDE_Morph.prototype.createControlBar = function () {
     this.controlBar.add(settingsButton);
     this.controlBar.settingsButton = settingsButton; // for menu positioning
 
-    // cloudButton
-    button = new PushButtonMorph(
-        this,
-        'cloudMenu',
-        'Cloud' //new SymbolMorph('cloud', 11)//cloud
-    );
-    button.corner = 2;
-    button.color = colors[0];
-    button.highlightColor = colors[1];
-    button.pressColor = colors[2];
-    button.labelMinExtent = new Point(18, 12);
-    button.padding = 0;
-    button.fontSize=12;
-    button.labelShadowOffset = new Point(-1, -1);
-    button.labelShadowColor = colors[0];
-    button.labelColor = this.buttonLabelColor;
-    button.contrast = this.buttonContrast;
-    button.drawNew();
-    button.hint = 'cloud operations';
-    button.fixLayout();
-    cloudButton = button;
-    this.controlBar.add(cloudButton);
-    this.controlBar.cloudButton = cloudButton; // for menu positioning
-
-    // languageButton
-    button = new PushButtonMorph(
-        this,
-        'languageMenu',
-        new SymbolMorph('world', 12)
-    );
-    button.corner = 2;
-    button.color = colors[0];
-    button.highlightColor = colors[0];
-    button.pressColor = colors[2];
-    button.labelMinExtent = new Point(9, 12);
-    button.padding = 0;
-    button.fontSize=12;
-    button.labelShadowOffset = new Point(-1, -1);
-    button.labelShadowColor = colors[0];
-    button.labelColor = this.buttonLabelColor;
-    button.contrast = this.buttonContrast;
-    button.drawNew();
-    button.hint = 'lang operations';
-    button.fixLayout();
-    languageButton = button;
-    this.controlBar.add(languageButton);
-    this.controlBar.languageButton = languageButton; // for menu positioning
-
+    
     // helpButton
     button = new PushButtonMorph(
         this,
@@ -849,7 +864,7 @@ IDE_Morph.prototype.createControlBar = function () {
         );
 
         languageButton.setCenter(myself.controlBar.center());
-        languageButton.setLeft(this.left()-172 );
+        languageButton.setLeft(this.left()-170 );
 
         projectButton.setCenter(myself.controlBar.center());
         projectButton.setLeft(languageButton.right() );
@@ -893,6 +908,8 @@ IDE_Morph.prototype.createControlBar = function () {
         this.label.setCenter(this.center());
         this.label.setLeft(this.helpButton.right() + padding);
     };
+    
+    
 };
 
 IDE_Morph.prototype.createCategories = function () {
@@ -1591,7 +1608,7 @@ IDE_Morph.prototype.createCorralBar = function () {
     }
 
     this.corralBar = new Morph();
-    this.corralBar.color = this.frameColor;
+    this.corralBar.color = IDE_Morph.prototype.backgroundColor;
     this.corralBar.setHeight(this.logo.height()); // height is fixed
     this.add(this.corralBar);
 
@@ -1711,9 +1728,10 @@ IDE_Morph.prototype.createCorral = function () {
     this.corral.add(frame);
 
     this.corral.fixLayout = function () {
-        this.stageIcon.setCenter(this.center());
+        //this.stageIcon.setCenter(this.center());
+        this.stageIcon.setTop(this.top()+padding);
         this.stageIcon.setLeft(this.left() + padding);
-        this.frame.setLeft(this.stageIcon.right() + padding);
+        this.frame.setLeft(this.stageIcon.right() + padding+padding);
         this.frame.setExtent(new Point(
             this.right() - this.frame.left(),
             this.height()
@@ -2085,6 +2103,9 @@ IDE_Morph.prototype.stopAllScripts = function () {
 
 IDE_Morph.prototype.selectSprite = function (sprite) {
     this.currentSprite = sprite;
+    if (this.currentSprite && this.currentSprite.scripts.focus) {
+         this.currentSprite.scripts.focus.stopEditing();
+    }
     this.createPalette();
     this.createSpriteBar();
     this.createSpriteEditor();
@@ -2129,7 +2150,6 @@ IDE_Morph.prototype.refreshIDE = function () {
     } else {
         this.openProjectString(projectData);
     }
-
 };
 
 // IDE_Morph settings persistance
@@ -3787,11 +3807,12 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
         elements = [
             this.logo,
             this.controlBar.languageButton,            
-            this.controlBar.cloudButton,
             this.controlBar.projectButton,
+            this.controlBar.cloudButton,
             this.controlBar.settingsButton,
             this.controlBar.helpButton,
             this.controlBar.stageSizeButton,
+            this.controlBar.appModeButton,
             this.stageHandle,
             this.corral,
             this.corralBar,
@@ -6376,7 +6397,8 @@ WardrobeMorph.prototype.updateList = function () {
         icon,
         template,
         txt,
-        paintbutton;
+        paintbutton,
+        loadCostumebutton;
 
     this.changed();
     oldFlag = Morph.prototype.trackChanges;
@@ -6842,6 +6864,7 @@ JukeboxMorph.prototype.updateList = function () {
         oldFlag = Morph.prototype.trackChanges,
         icon,
         template,
+        loadSoundButon,
         txt;
 
     this.changed();
