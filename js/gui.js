@@ -140,7 +140,7 @@ IDE_Morph.prototype.setFlatDesign = function () {
     SpriteMorph.prototype.paletteColor = new Color(255, 255, 255);
     SpriteMorph.prototype.paletteTextColor = new Color(70, 70, 70);
     StageMorph.prototype.paletteTextColor
-        = SpriteMorph.prototype.paletteTextColor;
+            = SpriteMorph.prototype.paletteTextColor;
     StageMorph.prototype.paletteColor = SpriteMorph.prototype.paletteColor;
     SpriteMorph.prototype.sliderColor = SpriteMorph.prototype.paletteColor;
 
@@ -524,7 +524,7 @@ IDE_Morph.prototype.createLogo = function () {
         window.open('http://snap.berkeley.edu/', 'SnapWebsite');
     };
     this.logoColor = new Color();
-    this.logo.setExtent(new Point(230, 28)); // dimensions are fixed
+    this.logo.setExtent(new Point(240, 28)); // dimensions are fixed
     this.add(this.logo);
 };
 
@@ -630,8 +630,8 @@ IDE_Morph.prototype.createControlBar = function () {
         this, // the IDE is the target
         'stopAllScripts',
         [
-            new SymbolMorph('octagon', 14),
-            new SymbolMorph('square', 14)
+            new SymbolMorph('octagon', 12),
+            new SymbolMorph('octagon', 14)
         ],
         function () {  // query
             return myself.stage ?
@@ -649,7 +649,7 @@ IDE_Morph.prototype.createControlBar = function () {
     button.padding = 0;
     button.labelShadowOffset = new Point(-1, -1);
     button.labelShadowColor = colors[1];
-    button.labelColor = new Color(200, 0, 0);
+    button.labelColor = new Color(255, 0, 0);
     button.contrast = this.buttonContrast;
     button.drawNew();
     // button.hint = 'stop\nevery-\nthing';
@@ -721,7 +721,7 @@ IDE_Morph.prototype.createControlBar = function () {
     );
     button.corner = 2;
     button.color = colors[0];
-    button.highlightColor = colors[0];
+    button.highlightColor = colors[1];
     button.pressColor = colors[2];
     button.labelMinExtent = new Point(9, 12);
     button.padding = 0;
@@ -839,6 +839,7 @@ IDE_Morph.prototype.createControlBar = function () {
 
 
     this.controlBar.fixLayout = function () {
+		
         x = this.right() - padding;
         [stopButton, pauseButton, startButton].forEach(
             function (button) {
@@ -864,7 +865,7 @@ IDE_Morph.prototype.createControlBar = function () {
         );
 
         languageButton.setCenter(myself.controlBar.center());
-        languageButton.setLeft(this.left()-170 );
+        languageButton.setLeft(this.left()-180 );
 
         projectButton.setCenter(myself.controlBar.center());
         projectButton.setLeft(languageButton.right() );
@@ -1698,7 +1699,7 @@ IDE_Morph.prototype.createCorral = function () {
     }
 
     this.corral = new Morph();
-    this.corral.color = this.groupColor;
+    this.corral.color = this.backgroundColor;
     this.add(this.corral);
 
     this.corral.stageIcon = new SpriteIconMorph(this.stage);
@@ -1717,7 +1718,8 @@ IDE_Morph.prototype.createCorral = function () {
         myself.corral.reactToDropOf(spriteIcon);
     };
 
-    frame.alpha = 0;
+	frame.color = this.groupColor;
+    frame.alpha = 100;
 
     this.sprites.asArray().forEach(function (morph) {
         template = new SpriteIconMorph(morph, template);
@@ -1728,14 +1730,15 @@ IDE_Morph.prototype.createCorral = function () {
     this.corral.add(frame);
 
     this.corral.fixLayout = function () {
-        //this.stageIcon.setCenter(this.center());
         this.stageIcon.setTop(this.top()+padding);
         this.stageIcon.setLeft(this.left() + padding);
-        this.frame.setLeft(this.stageIcon.right() + padding+padding);
+        this.frame.setTop(this.top()+padding);
+        this.frame.setLeft(this.stageIcon.right() + (padding*3));
         this.frame.setExtent(new Point(
             this.right() - this.frame.left(),
-            this.height()
+            this.height()-(padding*2)
         ));
+        this.frame.setBottom(this.bottom()-padding);
         this.arrangeIcons();
         this.refresh();
     };
@@ -1813,7 +1816,7 @@ IDE_Morph.prototype.fixLayout = function (situation) {
     // palette
     this.palette.setLeft(this.logo.left());
     this.palette.setTop(this.categories.bottom());
-    this.palette.setHeight(this.bottom() - this.palette.top());
+    this.palette.setHeight(this.bottom() - this.palette.top()-padding);
 
     if (situation !== 'refreshPalette') {
         // stage
@@ -1833,10 +1836,10 @@ IDE_Morph.prototype.fixLayout = function (situation) {
 
         // spriteBar
         this.spriteBar.setPosition(this.logo.bottomRight().add(padding));
-        this.spriteBar.setLeft(this.palette.right());
+        this.spriteBar.setLeft(this.palette.right()+padding);
         this.spriteBar.setExtent(new Point(
             Math.max(0, this.stage.left() - padding - this.spriteBar.left()),
-            this.categories.bottom() - this.spriteBar.top() - padding
+            this.categories.bottom() - this.spriteBar.top() 
         ));
         this.spriteBar.fixLayout();
 
@@ -1845,13 +1848,13 @@ IDE_Morph.prototype.fixLayout = function (situation) {
             this.spriteEditor.setPosition(this.spriteBar.bottomLeft());
             this.spriteEditor.setExtent(new Point(
                 this.spriteBar.width(),
-                this.bottom() - this.spriteEditor.top()
+                this.bottom() - this.spriteEditor.top()-padding
             ));
         }
 
         // corralBar
         this.corralBar.setLeft(this.stage.left());
-        this.corralBar.setTop(this.stage.bottom() + padding);
+        this.corralBar.setTop(this.stage.bottom());
         this.corralBar.setWidth(this.stage.width());
 
         // corral
@@ -2038,6 +2041,8 @@ IDE_Morph.prototype.pressStart = function () {
     if (this.world().currentKey === 16) { // shiftClicked
         this.toggleFastTracking();
     } else {
+        this.stage.threads.pauseCustomHatBlocks = false;
+        this.controlBar.stopButton.refresh();
         this.runScripts();
     }
 };
@@ -2096,6 +2101,15 @@ IDE_Morph.prototype.isPaused = function () {
 };
 
 IDE_Morph.prototype.stopAllScripts = function () {
+
+    if (this.stage.enableCustomHatBlocks) {
+        this.stage.threads.pauseCustomHatBlocks =
+            !this.stage.threads.pauseCustomHatBlocks;
+    } else {
+        this.stage.threads.pauseCustomHatBlocks = false;
+    }
+    this.controlBar.stopButton.refresh();
+    
     this.stage.fireStopAllEvent();
     if (!this.isAppMode)this.selectSprite(this.currentSprite);    
 
@@ -3812,7 +3826,6 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
             this.controlBar.settingsButton,
             this.controlBar.helpButton,
             this.controlBar.stageSizeButton,
-            this.controlBar.appModeButton,
             this.stageHandle,
             this.corral,
             this.corralBar,
@@ -3826,8 +3839,8 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
 
     Morph.prototype.trackChanges = false;
     if (this.isAppMode) {
-        this.setColor(this.appModeColor);
-        this.controlBar.setColor(this.frameColor);
+        //this.setColor(this.frameColor);
+        //this.controlBar.setColor(this.frameColor);
         this.controlBar.appModeButton.refresh();
         elements.forEach(function (e) {
             e.hide();
@@ -3838,8 +3851,8 @@ IDE_Morph.prototype.toggleAppMode = function (appMode) {
             }
         });
     } else {
-        this.setColor(this.backgroundColor);
-        this.controlBar.setColor(this.frameColor);
+        this.setColor(this.BackgroundColor);
+        this.controlBar.setColor(this.backgroundColor);
         elements.forEach(function (e) {
             e.show();
         });
@@ -4027,7 +4040,7 @@ IDE_Morph.prototype.userSetBlocksScale = function () {
     /*
     blck = SpriteMorph.prototype.blockForSelector('doForever');
     blck.inputs()[0].nestedBlock(scrpt);
-    */
+    //*/
 
     sample = new FrameMorph();
     sample.acceptsDrops = false;

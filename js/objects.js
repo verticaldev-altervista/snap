@@ -3326,6 +3326,7 @@ SpriteMorph.prototype.isCorrectingOutsideDrag = function () {
 SpriteMorph.prototype.justDropped = function () {
     this.restoreLayers();
     this.positionTalkBubble();
+    this.edit();
     this.receiveUserInteraction('dropped');
 };
 
@@ -3784,8 +3785,11 @@ SpriteMorph.prototype.mouseEnter = function () {
 };
 
 SpriteMorph.prototype.mouseDownLeft = function () {
+	if (this.isClone) {return; }
+    this.edit();
     return this.receiveUserInteraction('pressed');
 };
+
 
 SpriteMorph.prototype.receiveUserInteraction = function (interaction) {
     var stage = this.parentThatIsA(StageMorph),
@@ -6111,6 +6115,10 @@ StageMorph.prototype.mouseLeave = function () {
 
 StageMorph.prototype.mouseDownLeft
     = SpriteMorph.prototype.mouseDownLeft;
+
+StageMorph.prototype.mouseUpLeft
+    = SpriteMorph.prototype.mouseUpLeft;
+
 
 StageMorph.prototype.receiveUserInteraction
     = SpriteMorph.prototype.receiveUserInteraction;
