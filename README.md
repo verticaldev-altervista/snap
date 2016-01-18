@@ -25,5 +25,6 @@ fork of Berkeley Snap
 			function loop() {
 				world.doOneCycle();
 			}
+			document.write("<canvas id='world' tabindex='1' style='position: absolute;' />
+");
 		</script>
-		<canvas id="world" tabindex="1" style="position: absolute;" />
